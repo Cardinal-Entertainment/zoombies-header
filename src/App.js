@@ -1,5 +1,7 @@
 import './App.css';
 import {Container, Row, Col} from 'react-bootstrap';
+import ChatPanel from './components/ChatPanel';
+import {nakamaClient} from './utils/nakama';
 
 function App() {
   return (
@@ -8,7 +10,7 @@ function App() {
         <Container>
           <Row className="align-items-center">
             <Col className="col-1">
-              <img src="https://zoombies.world/images/avatars/frog.png" alt="" width="100%" />
+              <img src="/assets/skull1_avatar_head.svg" alt="" width="100%" />
             </Col>
             <Col className="">
               <span className="all-text">
@@ -24,12 +26,12 @@ function App() {
               <span className="all-text">465 PLAYERS</span>
             </Col>
             <Col>
-              <img src="https://zoombies.world/images/zoombies_coin.svg" alt="" width="16%" />
-              <span className="all-text"> 45,000,455</span>
+              <img src="https://zoombies.world/images/zoombies_coin.svg" alt="" width="26%" />
+              <span className="all-text">45,000,455</span>
             </Col>
             <Col>
-              <img src="https://zoombies.world/images/mr-icon.png" alt="" width="16%" />
-              <span className="all-text"> 100.345</span>
+              <img src="https://zoombies.world/images/mr-icon.png" alt="" width="26%" />
+              <span className="all-text">100.345</span>
             </Col>
             <Col className="col-1">
               <span className="all-text">Chat</span>
@@ -37,6 +39,7 @@ function App() {
           </Row>
         </Container>
       </div>
+      <ChatPanel></ChatPanel>
     </div>
   );
 }
