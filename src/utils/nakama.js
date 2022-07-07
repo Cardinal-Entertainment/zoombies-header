@@ -2,11 +2,14 @@ import {Client} from "@heroiclabs/nakama-js"
 import {WebSocketAdapterPb} from "@heroiclabs/nakama-js-protobuf"
 
 
+var session;
+var socket;
+
 export const NakamaClient = async () => {
 
-    var session;
+
     var nakamaClient;
-    var socket;
+
     var onlineUsers = [];
 
     const authenticateUser = async () => {
@@ -96,3 +99,5 @@ export const NakamaClient = async () => {
         console.error("ERROR auth email", err.statusCode, err.message);
     }
 };
+
+export {socket,session};
