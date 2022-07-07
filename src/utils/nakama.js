@@ -1,16 +1,14 @@
 import {Client} from "@heroiclabs/nakama-js"
 import {WebSocketAdapterPb} from "@heroiclabs/nakama-js-protobuf"
+import {JoinChatRoom} from '../components/ChatPanel';
 
 
 var session;
 var socket;
 
-export const NakamaClient = async () => {
-
+const NakamaClient = async () => {
 
     var nakamaClient;
-
-    var onlineUsers = [];
 
     const authenticateUser = async () => {
         const email = "ryanpricelondon@gmail.com";
@@ -20,28 +18,6 @@ export const NakamaClient = async () => {
     
         console.log("authenticating user...");
         session = await nakamaClient.authenticateEmail(email, password, create, username);
-    }
-
-    const checkOnlineUsers = () => {
-        socket.onchannelpresence = (presences) => {
-            console.log("presences");
-            console.log(presences);
-            // Remove all users who left.
-            onlineUsers = onlineUsers.filter((user) => {
-                return !presences.leave.includes(user);
-            });
-            // Add all users who joined.
-            onlineUsers.concat(presences.join);
-            console.log("online users:",onlineUsers);
-        };
-        console.log("online users1:",onlineUsers);
-    }
-    
-    const handleMessage = () => {
-        socket.onchannelmessage = (message) => {
-            console.log("Received a message on channel: %o", message.channel_id);
-            console.log("Message content: %o", message.content);
-        };
     }
 
     //Now try to authenticate
@@ -91,13 +67,13 @@ export const NakamaClient = async () => {
         var appearOnline = true;
         var connectionTimeout = 30;
         session = await socket.connect(session, appearOnline, connectionTimeout);
-        console.log('got here2',socket)
-        handleMessage();
-        checkOnlineUsers();
+        console.log('got here2',socket);
+
+         await JoinChatRoom();
     }
     catch(err){
         console.error("ERROR auth email", err.statusCode, err.message);
     }
 };
-
-export {socket,session};
+NakamaClient();
+export {NakamaClient,socket,session};

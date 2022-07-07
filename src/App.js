@@ -1,8 +1,15 @@
 import './App.css';
 import {Container, Row, Col} from 'react-bootstrap';
 import ChatPanel from './components/ChatPanel';
+import {JoinChatRoom} from './components/ChatPanel';
+import {NakamaClient} from './utils/nakama';
 
 function App() {
+
+  function showChat() {
+    document.getElementById('chat-panel').style.display = "block";
+  }
+
   return (
     <div className="App">
       <div id="main-box" className="mt-1 position-absolute top-0 start-50 translate-middle-x">
@@ -33,7 +40,7 @@ function App() {
               <span className="all-text">100.345</span>
             </Col>
             <Col className="col-1">
-              <span className="all-text">Chat</span>
+              <span className="all-text" onClick={showChat}>Chat</span>
             </Col>
           </Row>
         </Container>

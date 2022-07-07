@@ -35,15 +35,4 @@ code {
 .player-wallet {
   color:#ffffff
 }
-
-
-
-#chat-panel {
-  border: 3px solid rgb(14,3,55);
-  border-radius: 8px;
-  background-color: rgba(14,3,55,0.7);
-  padding: 10px;
-  color:red;
-  position: absolute;
-  top:100px;
-}
+ 
