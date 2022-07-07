@@ -1,38 +1,13 @@
-import {Client,nakamajs} from "@heroiclabs/nakama-js"
+import {Client} from "@heroiclabs/nakama-js"
 import {WebSocketAdapterPb} from "@heroiclabs/nakama-js-protobuf"
 
-var nakamaClient;
-var socket;
-var onlineUsers = [];
 
+export const NakamaClient = async () => {
 
-const checkOnlineUsers = () => {
-    socket.onchannelpresence = (presences) => {
-        console.log("presences");
-        console.log(presences);
-        // Remove all users who left.
-        onlineUsers = onlineUsers.filter((user) => {
-            return !presences.leave.includes(user);
-        });
-        // Add all users who joined.
-        onlineUsers.concat(presences.join);
-        console.log("online users:",onlineUsers);
-    };
-    console.log("online users1:",onlineUsers);
-}
-
-const handleMessage = () => {
-    socket.onchannelmessage = (message) => {
-        console.log("Received a message on channel: %o", message.channel_id);
-        console.log("Message content: %o", message.content);
-    };
-}
-
-
-
-(async () => {
-
-    let session;
+    var session;
+    var nakamaClient;
+    var socket;
+    var onlineUsers = [];
 
     const authenticateUser = async () => {
         const email = "ryanpricelondon@gmail.com";
@@ -44,15 +19,33 @@ const handleMessage = () => {
         session = await nakamaClient.authenticateEmail(email, password, create, username);
     }
 
-    //define 1 big room for all chat
-    const roomname = "ZoombiesMainRoom";
-    const persistence = true;
-    const hidden = false;
+    const checkOnlineUsers = () => {
+        socket.onchannelpresence = (presences) => {
+            console.log("presences");
+            console.log(presences);
+            // Remove all users who left.
+            onlineUsers = onlineUsers.filter((user) => {
+                return !presences.leave.includes(user);
+            });
+            // Add all users who joined.
+            onlineUsers.concat(presences.join);
+            console.log("online users:",onlineUsers);
+        };
+        console.log("online users1:",onlineUsers);
+    }
+    
+    const handleMessage = () => {
+        socket.onchannelmessage = (message) => {
+            console.log("Received a message on channel: %o", message.channel_id);
+            console.log("Message content: %o", message.content);
+        };
+    }
 
     //Now try to authenticate
     try {
         const authtoken = window.localStorage.getItem("nkauthtoken");
         const refreshtoken = window.localStorage.getItem("nkrefreshtoken");
+        
 
         nakamaClient = new Client(process.env.REACT_APP_NAKAMA_SERVER_KEY, "cryptoz.cards", 7350);
         //nakamaClient = new Client("defaultkey", "127.0.0.1", 7350);
@@ -66,15 +59,19 @@ const handleMessage = () => {
         }else{
             console.log("we have a session..check it..", nakamaClient);
             await authenticateUser();
+            console.log(session);
             //console.log(nakamaClient);
-            try
-            {
+            // Check whether a session has expired or is close to expiry.
+            if (session.isexpired || session.isexpired(Date.now + 1)) {
+                try {
+                    // Attempt to refresh the existing session.
                     session = await nakamaClient.sessionRefresh(session);
-            }
-            catch (e)
-            {
-                    console.info("Session can no longer be refreshed. Must reauthenticate!");
+                } catch (error) {
+                    // Couldn't refresh the session so reauthenticate.
                     await authenticateUser();
+                    window.localStorage.setItem("nkrefreshtoken", session.refresh_token);
+                }
+                window.localStorage.setItem("nkauthtoken", session.token);
             }
         }   
 
@@ -94,27 +91,8 @@ const handleMessage = () => {
         console.log('got here2',socket)
         handleMessage();
         checkOnlineUsers();
-
-        await socket.updateStatus("Hello, I am online now");
-
-        // 1 = Room, 2 = Direct Message, 3 = Group
-
-        const channel = await socket.joinChat(roomname, 1, persistence, hidden);
-        console.log("join response:", channel);
-    
-        console.log('got here3',channel.channel_id);
-
-        var data = { "hello": "world" };
-        const messageAck = await socket.writeChatMessage(channel.id, data);
-       
-       
-
     }
     catch(err){
         console.error("ERROR auth email", err.statusCode, err.message);
     }
-
-
-})();
-
-export default nakamaClient;
+};

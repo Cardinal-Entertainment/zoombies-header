@@ -1,7 +1,6 @@
 import './App.css';
 import {Container, Row, Col} from 'react-bootstrap';
 import ChatPanel from './components/ChatPanel';
-import {nakamaClient} from './utils/nakama';
 
 function App() {
   return (
