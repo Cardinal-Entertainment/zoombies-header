@@ -6,11 +6,11 @@ function App() {
     <div className="App">
       <div id="main-box" className="mt-5">
         <Container fluid="lg">
-          <Row className="row align-items-center">
+          <Row className="align-items-center">
             <Col className="col-1">
               <img src="https://zoombies.world/images/avatars/frog.png" alt="" width="100%" />
             </Col>
-            <Col className="row justify-content-start">
+            <Col className="">
               <span className="all-text">
                 Priceman614<br/></span>
                 <span className="player-wallet">0x343...3434</span>
