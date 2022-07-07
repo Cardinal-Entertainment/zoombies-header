@@ -1,9 +1,10 @@
-import {Client} from "@heroiclabs/nakama-js"
+import {Client,nakamajs} from "@heroiclabs/nakama-js"
+import {WebSocketAdapterPb} from "@heroiclabs/nakama-js-protobuf"
 
 var nakamaClient;
 var socket;
 var onlineUsers = [];
-var session;
+
 
 const checkOnlineUsers = () => {
     socket.onchannelpresence = (presences) => {
@@ -27,20 +28,21 @@ const handleMessage = () => {
     };
 }
 
-const authenticateUser = async () => {
-    const email = "ryanpricelondon@gmail.com";
-    const username = "priceman614"
-    const password = "12345678";
-    const create = false;
 
-    console.log("authenticating user...");
-    session = await nakamaClient.authenticateEmail(email, password, create, username);
-
-}
 
 (async () => {
 
+    let session;
 
+    const authenticateUser = async () => {
+        const email = "ryanpricelondon@gmail.com";
+        const username = "priceman614"
+        const password = "12345678";
+        const create = false;
+    
+        console.log("authenticating user...");
+        session = await nakamaClient.authenticateEmail(email, password, create, username);
+    }
 
     //define 1 big room for all chat
     const roomname = "ZoombiesMainRoom";
@@ -62,57 +64,51 @@ const authenticateUser = async () => {
             window.localStorage.setItem("nkauthtoken", session.token);
             window.localStorage.setItem("nkrefreshtoken", session.refresh_token);
         }else{
-            console.log("we have a session..check it..", authtoken);
-            session = nakamaClient.Session.restore(authtoken, refreshtoken);
-
-            // Check whether a session is close to expiry.
-            const unixTimeInFuture = Date.now() + 8.64e+7; // one day from now
-
-            if (session.isexpired(unixTimeInFuture / 1000)) {
-                try
-                {
+            console.log("we have a session..check it..", nakamaClient);
+            await authenticateUser();
+            //console.log(nakamaClient);
+            try
+            {
                     session = await nakamaClient.sessionRefresh(session);
-                }
-                catch (e)
-                {
+            }
+            catch (e)
+            {
                     console.info("Session can no longer be refreshed. Must reauthenticate!");
-                    authenticateUser();
-                }
+                    await authenticateUser();
             }
         }   
 
 
-/*
-        socket = nakamaClient.createSocket(false,true);
+
+        socket = nakamaClient.createSocket(false,true,new WebSocketAdapterPb());
         console.log('got here', socket);
         socket.ondisconnect = (evt) => {
-            console.info("Disconnected", evt);
+            console.info("Socket Disconnected", evt);
         };
+        socket.onerror = (evt) => {
+            console.log("Socket error", evt);
+        }
         var appearOnline = true;
         var connectionTimeout = 30;
-        await socket.connect(session, appearOnline, connectionTimeout);
+        session = await socket.connect(session, appearOnline, connectionTimeout);
         console.log('got here2',socket)
-
-
-        // 1 = Room, 2 = Direct Message, 3 = Group
-        const response = await socket.joinChat(1, roomname, persistence, hidden);
-        console.log("join response:");
-        console.log(response);
-        var data = { "some": "data" };
-        const messageAck = await socket.writeChatMessage(response.channel_id, data);
-        
-
-        // Setup initial online user list.
-        onlineUsers.concat(response.channel.presences);
-        // Remove your own user from list.
-        onlineUsers = onlineUsers.filter((user) => {
-            return user !== response.channel.self;
-        });
-    
-        console.log('got here3');
         handleMessage();
         checkOnlineUsers();
-*/
+
+        await socket.updateStatus("Hello, I am online now");
+
+        // 1 = Room, 2 = Direct Message, 3 = Group
+
+        const channel = await socket.joinChat(roomname, 1, persistence, hidden);
+        console.log("join response:", channel);
+    
+        console.log('got here3',channel.channel_id);
+
+        var data = { "hello": "world" };
+        const messageAck = await socket.writeChatMessage(channel.id, data);
+       
+       
+
     }
     catch(err){
         console.error("ERROR auth email", err.statusCode, err.message);
