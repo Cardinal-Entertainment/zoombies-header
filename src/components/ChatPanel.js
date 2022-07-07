@@ -20,6 +20,8 @@ export const JoinChatRoom = async () => {
     channel = await socket.joinChat(roomname, 1, persistence, hidden);
     console.log("join response:", channel);
 
+    console.log(channel.log);
+
     console.log('got here3',channel.id);
     handleMessage();
     checkOnlineUsers();
@@ -43,8 +45,15 @@ const checkOnlineUsers = () => {
 
 const handleMessage = () => {
     socket.onchannelmessage = (message) => {
-        console.log("Received a message on channel: %o", message.channel_id);
-        console.log("Message content: %o", message.content);
+        console.log("Received a message", message);
+        console.log(message.username);
+        console.log(message.content);
+        console.log(message.create_time);
+
+        const time = new Date(message.create_time);
+    
+        const msg = '<div><span>'+ time.toLocaleTimeString() +'</span> <span id="name">'+message.username+'</span> <span>'+message.content.message+'</span></div>';
+        document.getElementById('chatbox').innerHTML += msg;
     };
 }
 
@@ -55,15 +64,15 @@ function hideChat() {
 }
 
 function ChatPanel () {
-        const [userText,setInputValue] = useState('');
+        let [userText,setInputValue] = useState('');
 
         async function sendMessage() {
             console.log(userText);
             console.log(channel);
             
-            var data = { "hello": "world" };
+            var data = { "message": userText };
             const messageAck = await socket.writeChatMessage(channel.id, data);
-            
+            setInputValue('');
         }
 
         const onInputValueChanged = (e) => {
@@ -86,9 +95,7 @@ function ChatPanel () {
                     </Row>
                     <Row>
                         <Col>
-                            <div id="chatbox">
-                                <span>13:02</span> <span id="name">Priceman614</span> <span>Hello this morning</span>
-                            </div>
+                            <div id="chatbox"></div>
                         </Col>
                         <Col>
                             <div id="players">
@@ -98,7 +105,7 @@ function ChatPanel () {
                     </Row>
                     <Row>
                         <Col>
-                            <input name="usermsg" type="text" value={userText} id="usermsg" size="70" onChange={onInputValueChanged} />
+                            <input name="usermsg" type="text" value={userText} placeholder="Enter chat message here" id="usermsg" size="70" onChange={onInputValueChanged} />
                             <input name="submitmsg" type="submit" id="submitmsg" value="Send" onClick={sendMessage} />
                         </Col>
                     </Row>

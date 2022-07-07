@@ -56,7 +56,7 @@ const NakamaClient = async () => {
 
 
 
-        socket = nakamaClient.createSocket(false,true,new WebSocketAdapterPb());
+        socket = nakamaClient.createSocket(false,false,new WebSocketAdapterPb());
         console.log('got here', socket);
         socket.ondisconnect = (evt) => {
             console.info("Socket Disconnected", evt);
