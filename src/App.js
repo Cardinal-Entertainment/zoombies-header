@@ -4,8 +4,8 @@ import {Container, Row, Col} from 'react-bootstrap';
 function App() {
   return (
     <div className="App">
-      <div id="main-box" className="mt-5">
-        <Container fluid="lg">
+      <div id="main-box" className="mt-1 position-absolute top-0 start-50 translate-middle-x">
+        <Container>
           <Row className="align-items-center">
             <Col className="col-1">
               <img src="https://zoombies.world/images/avatars/frog.png" alt="" width="100%" />
