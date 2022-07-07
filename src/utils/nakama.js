@@ -5,16 +5,18 @@ import {JoinChatRoom} from '../components/ChatPanel';
 
 var session;
 var socket;
+let username;
 
 const NakamaClient = async () => {
 
     var nakamaClient;
 
     const authenticateUser = async () => {
-        const email = "ryanpricelondon@gmail.com";
-        const username = "priceman614"
+        const r = Math.round(Math.random()*100);
+        const email = "ryanpricelondon"+r+"@gmail.com";
+        username = "Priceman"+r;
         const password = "12345678";
-        const create = false;
+        const create = true;
     
         console.log("authenticating user...");
         session = await nakamaClient.authenticateEmail(email, password, create, username);
@@ -55,7 +57,6 @@ const NakamaClient = async () => {
         }   
 
 
-
         socket = nakamaClient.createSocket(false,false,new WebSocketAdapterPb());
         console.log('got here', socket);
         socket.ondisconnect = (evt) => {
@@ -76,4 +77,4 @@ const NakamaClient = async () => {
     }
 };
 NakamaClient();
-export {NakamaClient,socket,session};
+export {NakamaClient,socket,session, username};

@@ -2,7 +2,7 @@ import './App.css';
 import {Container, Row, Col} from 'react-bootstrap';
 import ChatPanel from './components/ChatPanel';
 import {JoinChatRoom} from './components/ChatPanel';
-import {NakamaClient} from './utils/nakama';
+import {NakamaClient,username} from './utils/nakama';
 
 function App() {
 
@@ -20,7 +20,7 @@ function App() {
             </Col>
             <Col className="">
               <span className="all-text">
-                Priceman614<br/></span>
+                {username}<br/></span>
                 <span className="player-wallet">0x343...3434</span>
             </Col>
             <Col className="col-2">

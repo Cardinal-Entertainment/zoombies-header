@@ -1,5 +1,5 @@
 import React, { Component, useState } from "react";
-import {NakamaClient, socket} from '../utils/nakama';
+import {NakamaClient, socket, username} from '../utils/nakama';
 import {Container, Row, Col, Button} from 'react-bootstrap';
 import './chat.css';
 
@@ -27,18 +27,27 @@ export const JoinChatRoom = async () => {
     checkOnlineUsers();
 }
 
+function updateUsers () {
+    document.getElementById('players').innerHTML = '';
+    onlineUsers.forEach(player => {
+            document.getElementById('players').innerHTML += player.username+"<br/>";
+    });
+}
 
 const checkOnlineUsers = () => {
     socket.onchannelpresence = (presences) => {
         console.log("presences");
         console.log(presences);
+        console.log("online users1:",onlineUsers);
         // Remove all users who left.
         onlineUsers = onlineUsers.filter((user) => {
             return !presences.leave.includes(user);
         });
         // Add all users who joined.
-        onlineUsers.concat(presences.join);
-        console.log("online users:",onlineUsers);
+        onlineUsers = onlineUsers.concat(presences.joins);
+        console.log(presences.joins[0].username);
+        console.log("online users2:",onlineUsers);
+        updateUsers();
     };
     console.log("online users1:",onlineUsers);
 }
@@ -56,8 +65,6 @@ const handleMessage = () => {
         document.getElementById('chatbox').innerHTML += msg;
     };
 }
-
-
 
 function hideChat() {
     document.getElementById('chat-panel').style.display = "none";
@@ -86,7 +93,7 @@ function ChatPanel () {
                 <Container>
                     <Row className="mb-2">
                         <Col className="col-5">
-                            Welcome <strong>Priceman614</strong>,
+                            Welcome <strong>{username}</strong>,
                         </Col>
                         <Col></Col>
                         <Col className="col-1">
@@ -95,11 +102,13 @@ function ChatPanel () {
                     </Row>
                     <Row>
                         <Col>
-                            <div id="chatbox"></div>
+                            <div id="chatbox">
+                                Fetching chat...
+                            </div>
                         </Col>
                         <Col>
                             <div id="players">
-                                Priceman614
+                                Fetching players...
                             </div>
                         </Col>
                     </Row>
