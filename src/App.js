@@ -6,29 +6,33 @@ function App() {
     <div className="App">
       <div id="main-box" className="mt-5">
         <Container fluid="lg">
-          <Row className="justify-content-center">
-            <Col>
-              <span>Priceman614</span><br/>
-              0x343...3434
+          <Row className="row align-items-center">
+            <Col className="col-1">
+              <img src="https://zoombies.world/images/avatars/frog.png" alt="" width="100%" />
             </Col>
-            <Col>
-              <img src="https://zoombies.world/images/gold_vip.svg" alt="" width="16%" />
-              <span> 12</span>
+            <Col className="row justify-content-start">
+              <span className="all-text">
+                Priceman614<br/></span>
+                <span className="player-wallet">0x343...3434</span>
+            </Col>
+            <Col className="col-2">
+              <img src="https://zoombies.world/images/gold_vip.svg" alt="" width="40%" />
+              <span className="player-level"> 12</span>
             </Col>
             <Col>
               <img src="https://zoombies.world/images/mr-icon.png" alt="" width="16%" />
-              <span> Moonriver Network<br/>465 PLAYERS ONLINE</span>
+              <span className="all-text">465 PLAYERS</span>
             </Col>
             <Col>
               <img src="https://zoombies.world/images/zoombies_coin.svg" alt="" width="16%" />
-              <span> 45,000,455</span>
+              <span className="all-text"> 45,000,455</span>
             </Col>
             <Col>
               <img src="https://zoombies.world/images/mr-icon.png" alt="" width="16%" />
-              <span> 1.345</span>
+              <span className="all-text"> 100.345</span>
             </Col>
-            <Col>
-              <span>Chat</span>
+            <Col className="col-1">
+              <span className="all-text">Chat</span>
             </Col>
           </Row>
         </Container>
