@@ -19,32 +19,35 @@ export const JoinChatRoom = async () => {
 
     channel = await socket.joinChat(roomname, 1, persistence, hidden);
     console.log("join response:", channel);
-
-    console.log(channel.log);
+    onlineUsers = channel.presences;
+    updateUsers();
 
     console.log('got here3',channel.id);
     handleMessage();
-    checkOnlineUsers();
+    watchOnlineUsers();
 }
 
 function updateUsers () {
     document.getElementById('players').innerHTML = '';
     onlineUsers.forEach(player => {
-            document.getElementById('players').innerHTML += player.username+"<br/>";
+            document.getElementById('players').innerHTML += player+"<br/>";
     });
 }
 
-const checkOnlineUsers = () => {
+const watchOnlineUsers = () => {
     socket.onchannelpresence = (presences) => {
         console.log("presences");
         console.log(presences);
-        console.log("online users1:",onlineUsers);
+        console.log("online users:",onlineUsers);
         // Remove all users who left.
         onlineUsers = onlineUsers.filter((user) => {
             return !presences.leaves.includes(user);
         });
         // Add all users who joined.
-        onlineUsers = onlineUsers.concat(presences.joins);
+        //onlineUsers = onlineUsers.concat(presences.joins);
+        presences.joins.forEach(playerObj => {
+            onlineUsers.push(playerObj.username);
+        })
         console.log("online users2:",onlineUsers);
         updateUsers();
         //let the room know
@@ -74,8 +77,9 @@ const handleMessage = () => {
     };
 }
 
-function hideChat() {
+async function hideChat() {
     document.getElementById('chat-panel').style.display = "none";
+    await socket.leaveChat(channel.id);
 }
 
 function ChatPanel () {

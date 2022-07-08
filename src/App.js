@@ -6,8 +6,9 @@ import {NakamaClient,username} from './utils/nakama';
 
 function App() {
 
-  function showChat() {
+  async function showChat() {
     document.getElementById('chat-panel').style.display = "block";
+    await JoinChatRoom();
   }
 
   return (
