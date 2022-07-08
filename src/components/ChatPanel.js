@@ -45,7 +45,6 @@ const checkOnlineUsers = () => {
         });
         // Add all users who joined.
         onlineUsers = onlineUsers.concat(presences.joins);
-        console.log(presences.joins[0].username);
         console.log("online users2:",onlineUsers);
         updateUsers();
     };
@@ -88,8 +87,15 @@ function ChatPanel () {
             
         }
 
+
+        function handleKeyDown(e) {
+            if(e.keyCode === 13){
+                sendMessage();
+            }
+        }
+
         return (   
-            <div id="chat-panel">
+            <div id="chat-panel" onKeyDown={handleKeyDown}>
                 <Container>
                     <Row className="mb-2">
                         <Col className="col-5">
