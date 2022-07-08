@@ -33,7 +33,7 @@ const NakamaClient = async () => {
         //console.log("nakama client:",nakamaClient);
 
         if(authtoken === null){
-            authenticateUser();
+            await authenticateUser();
             console.info("Successfully authenticated new session:", session);
             window.localStorage.setItem("nkauthtoken", session.token);
             window.localStorage.setItem("nkrefreshtoken", session.refresh_token);

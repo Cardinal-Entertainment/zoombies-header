@@ -41,7 +41,7 @@ const checkOnlineUsers = () => {
         console.log("online users1:",onlineUsers);
         // Remove all users who left.
         onlineUsers = onlineUsers.filter((user) => {
-            return !presences.leave.includes(user);
+            return !presences.leaves.includes(user);
         });
         // Add all users who joined.
         onlineUsers = onlineUsers.concat(presences.joins);
