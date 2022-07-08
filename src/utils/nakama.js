@@ -28,8 +28,8 @@ const NakamaClient = async () => {
         const refreshtoken = window.localStorage.getItem("nkrefreshtoken");
         
 
-        nakamaClient = new Client(process.env.REACT_APP_NAKAMA_SERVER_KEY, "cryptoz.cards", 7350);
-        //nakamaClient = new Client("defaultkey", "127.0.0.1", 7350);
+        //nakamaClient = new Client(process.env.REACT_APP_NAKAMA_SERVER_KEY, "cryptoz.cards", 7350);
+        nakamaClient = new Client("defaultkey", "127.0.0.1", 7350);
         //console.log("nakama client:",nakamaClient);
 
         if(authtoken === null){

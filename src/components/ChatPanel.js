@@ -47,6 +47,15 @@ const checkOnlineUsers = () => {
         onlineUsers = onlineUsers.concat(presences.joins);
         console.log("online users2:",onlineUsers);
         updateUsers();
+        //let the room know
+        presences.joins.forEach(playerObj => {
+            const msg = '<div class="user-joined">'+ playerObj.username +' has entered the room</div>';
+            document.getElementById('chatbox').innerHTML += msg;
+        });
+        presences.leaves.forEach(playerObj => {
+            const msg = '<div class="user-joined">'+ playerObj.username +' has left the room</div>';
+            document.getElementById('chatbox').innerHTML += msg;
+        })
     };
     console.log("online users1:",onlineUsers);
 }

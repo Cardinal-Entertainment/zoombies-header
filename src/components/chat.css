@@ -41,3 +41,8 @@
     border: 1px solid #ff9800;
     padding: 2px 8px;
   }
+
+  .user-joined {
+    font-weight: bold;
+    color: rgb(189, 145, 230);
+  }
