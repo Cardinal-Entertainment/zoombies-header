@@ -20,6 +20,7 @@ export const JoinChatRoom = async () => {
     channel = await socket.joinChat(roomname, 1, persistence, hidden);
     console.log("join response:", channel);
     onlineUsers = channel.presences;
+    //onlineUsers.push(channel.self);
     updateUsers();
 
     console.log('got here3',channel.id);
@@ -30,26 +31,27 @@ export const JoinChatRoom = async () => {
 function updateUsers () {
     document.getElementById('players').innerHTML = '';
     onlineUsers.forEach(player => {
-            document.getElementById('players').innerHTML += player+"<br/>";
+            document.getElementById('players').innerHTML += player.username +"<br/>";
     });
 }
 
 const watchOnlineUsers = () => {
     socket.onchannelpresence = (presences) => {
-        console.log("presences");
+        console.log("presences updates incoming...");
         console.log(presences);
-        console.log("online users:",onlineUsers);
+        console.log("before update..watch usersOnline:",onlineUsers);
         // Remove all users who left.
         onlineUsers = onlineUsers.filter((user) => {
-            return !presences.leaves.includes(user);
+            console.log("inside the Leaves filter",user,presences.leaves.includes(user));
+            return presences.leaves.includes(user);
         });
         // Add all users who joined.
         //onlineUsers = onlineUsers.concat(presences.joins);
         presences.joins.forEach(playerObj => {
-            onlineUsers.push(playerObj.username);
+            onlineUsers.push(playerObj);
         })
         console.log("online users2:",onlineUsers);
-        updateUsers();
+        
         //let the room know
         presences.joins.forEach(playerObj => {
             const msg = '<div class="user-joined">'+ playerObj.username +' has entered the room</div>';
@@ -59,8 +61,8 @@ const watchOnlineUsers = () => {
             const msg = '<div class="user-joined">'+ playerObj.username +' has left the room</div>';
             document.getElementById('chatbox').innerHTML += msg;
         })
+        updateUsers(); //view
     };
-    console.log("online users1:",onlineUsers);
 }
 
 const handleMessage = () => {
@@ -107,8 +109,11 @@ function ChatPanel () {
             }
         }
 
-        return (   
-            <div id="chat-panel" onKeyDown={handleKeyDown}>
+        return (
+            <Row>
+                <Col></Col>
+                <Col className="col-6">   
+                    <div id="chat-panel" onKeyDown={handleKeyDown} className="">
                 <Container>
                     <Row className="mb-2">
                         <Col className="col-5">
@@ -138,7 +143,10 @@ function ChatPanel () {
                         </Col>
                     </Row>
                 </Container>
-            </div>
+                    </div>
+                </Col>
+                <Col className="col-1"></Col>
+            </Row>
         );
     };
 
