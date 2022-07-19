@@ -1,5 +1,5 @@
 import React, { Component, useState } from "react";
-import {NakamaClient, socket, username} from '../utils/nakama';
+import {nakamaClient, socket, session, username} from '../utils/nakama';
 import {Container, Row, Col, Button} from 'react-bootstrap';
 import './chat.css';
 
@@ -29,6 +29,14 @@ export const JoinChatRoom = async () => {
         console.log('got here3',channel.id);
         handleMessage();
         watchOnlineUsers();
+
+        //get chat history
+        console.log(nakamaClient);
+        const chatResult = await nakamaClient.listChannelMessages(session, channel.id, 10, true);
+
+        chatResult.messages.forEach((message) => {
+            document.getElementById('chatbox').innerHTML += formatMessage(message.create_time, message.username, message.content.message);
+        }); 
     }
 }
 
@@ -41,24 +49,23 @@ function updateUsers () {
 
 const watchOnlineUsers = () => {
     socket.onchannelpresence = (presences) => {
-        console.log("onchannelpresences...");
-        console.log(presences);
-        console.log("online users:BEFORE:",onlineUsers);
+        //console.log("onchannelpresences...");
+        //console.log(presences);
+        ///console.log("online users:BEFORE:",onlineUsers);
         // WHY DOESNT THIS WORK ??? Remove all users who left.
          onlineUsers = onlineUsers.filter((user) => {
-            console.log("inside filter, leaves:",presences.leaves);
-            console.log("filter out leaves looking for", user, presences.leaves.includes(user));
+            //console.log("inside filter, leaves:",presences.leaves);
+            //console.log("filter out leaves looking for", user, presences.leaves.includes(user));
             //return !presences.leaves.includes(user);
             return !presences.leaves.some(userObj => userObj.user_id === user.user_id);
          
         });
-        console.log("online users:AFTER LEAVES:",onlineUsers);
+        //console.log("online users:AFTER LEAVES:",onlineUsers);
         // Add all users who joined.
-        //onlineUsers = onlineUsers.concat(presences.joins);
         presences.joins.forEach(playerObj => {
             onlineUsers.push(playerObj);
         })
-        console.log("online users:AFTER JOINS:",onlineUsers);
+        //console.log("online users:AFTER JOINS:",onlineUsers);
         updateUsers();
         //let the room know
         presences.joins.forEach(playerObj => {
@@ -70,15 +77,18 @@ const watchOnlineUsers = () => {
             document.getElementById('chatbox').innerHTML += msg;
         })
     };
-    console.log("online users1:",onlineUsers);
+    //console.log("online users1:",onlineUsers);
+}
+
+function formatMessage(create_time, username, message) {
+    const time = new Date(create_time);
+    
+    return '<div><span>'+ time.toLocaleTimeString() +'</span> <span id="name">'+username+'</span> <span>'+message+'</span></div>';
 }
 
 const handleMessage = () => {
     socket.onchannelmessage = (message) => {
-        const time = new Date(message.create_time);
-    
-        const msg = '<div><span>'+ time.toLocaleTimeString() +'</span> <span id="name">'+message.username+'</span> <span>'+message.content.message+'</span></div>';
-        document.getElementById('chatbox').innerHTML += msg;
+        document.getElementById('chatbox').innerHTML += formatMessage(message.create_time, message.username, message.content.message);
     };
 }
 

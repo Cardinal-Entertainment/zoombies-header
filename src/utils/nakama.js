@@ -6,10 +6,9 @@ import {JoinChatRoom, hideChat} from '../components/ChatPanel';
 var session;
 var socket;
 let username;
+var nakamaClient;
 
-const NakamaClient = async () => {
-
-    var nakamaClient;
+const InitNakamaClient = async () => {
 
     const authenticateUser = async () => {
         const r = Math.round(Math.random()*100);
@@ -78,5 +77,5 @@ const NakamaClient = async () => {
         console.error("ERROR auth email", err.statusCode, err.message);
     }
 };
-NakamaClient();
-export {NakamaClient,socket,session, username};
+InitNakamaClient();
+export {nakamaClient,socket,session, username};
