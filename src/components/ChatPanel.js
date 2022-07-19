@@ -46,10 +46,12 @@ const watchOnlineUsers = () => {
         console.log("online users:BEFORE:",onlineUsers);
         // WHY DOESNT THIS WORK ??? Remove all users who left.
          onlineUsers = onlineUsers.filter((user) => {
-            console.log("filter out leaves looking for", user);
-             return !presences.leaves.includes(user);
-             //return 
-         });
+            console.log("inside filter, leaves:",presences.leaves);
+            console.log("filter out leaves looking for", user, presences.leaves.includes(user));
+            //return !presences.leaves.includes(user);
+            return !presences.leaves.some(userObj => userObj.user_id === user.user_id);
+         
+        });
         console.log("online users:AFTER LEAVES:",onlineUsers);
         // Add all users who joined.
         //onlineUsers = onlineUsers.concat(presences.joins);
