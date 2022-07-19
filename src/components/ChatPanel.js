@@ -12,46 +12,52 @@ export const JoinChatRoom = async () => {
     const hidden = false;
 
     console.log("JoinChatRoom...");
+
+    //check for valid socket
+    if (!socket) {
+        console.log("joining chat failed, socket not available");
+    } else {
+        await socket.updateStatus("Hello, I am online now");
+
+        // 1 = Room, 2 = Direct Message, 3 = Group
     
-    await socket.updateStatus("Hello, I am online now");
-
-    // 1 = Room, 2 = Direct Message, 3 = Group
-
-    channel = await socket.joinChat(roomname, 1, persistence, hidden);
-    console.log("join response:", channel);
-    onlineUsers = channel.presences;
-    //onlineUsers.push(channel.self);
-    updateUsers();
-
-    console.log('got here3',channel.id);
-    handleMessage();
-    watchOnlineUsers();
+        channel = await socket.joinChat(roomname, 1, persistence, hidden);
+        console.log("join response:", channel);
+        onlineUsers = channel.presences;
+        updateUsers();
+    
+        console.log('got here3',channel.id);
+        handleMessage();
+        watchOnlineUsers();
+    }
 }
 
 function updateUsers () {
     document.getElementById('players').innerHTML = '';
     onlineUsers.forEach(player => {
-            document.getElementById('players').innerHTML += player.username +"<br/>";
+            document.getElementById('players').innerHTML += player.username+"<br/>";
     });
 }
 
 const watchOnlineUsers = () => {
     socket.onchannelpresence = (presences) => {
-        console.log("presences updates incoming...");
+        console.log("onchannelpresences...");
         console.log(presences);
-        console.log("before update..watch usersOnline:",onlineUsers);
-        // Remove all users who left.
-        onlineUsers = onlineUsers.filter((user) => {
-            console.log("inside the Leaves filter",user,presences.leaves.includes(user));
-            return presences.leaves.includes(user);
-        });
+        console.log("online users:BEFORE:",onlineUsers);
+        // WHY DOESNT THIS WORK ??? Remove all users who left.
+         onlineUsers = onlineUsers.filter((user) => {
+            console.log("filter out leaves looking for", user);
+             return !presences.leaves.includes(user);
+             //return 
+         });
+        console.log("online users:AFTER LEAVES:",onlineUsers);
         // Add all users who joined.
         //onlineUsers = onlineUsers.concat(presences.joins);
         presences.joins.forEach(playerObj => {
             onlineUsers.push(playerObj);
         })
-        console.log("online users2:",onlineUsers);
-        
+        console.log("online users:AFTER JOINS:",onlineUsers);
+        updateUsers();
         //let the room know
         presences.joins.forEach(playerObj => {
             const msg = '<div class="user-joined">'+ playerObj.username +' has entered the room</div>';
@@ -61,17 +67,12 @@ const watchOnlineUsers = () => {
             const msg = '<div class="user-joined">'+ playerObj.username +' has left the room</div>';
             document.getElementById('chatbox').innerHTML += msg;
         })
-        updateUsers(); //view
     };
+    console.log("online users1:",onlineUsers);
 }
 
 const handleMessage = () => {
     socket.onchannelmessage = (message) => {
-        console.log("Received a message", message);
-        console.log(message.username);
-        console.log(message.content);
-        console.log(message.create_time);
-
         const time = new Date(message.create_time);
     
         const msg = '<div><span>'+ time.toLocaleTimeString() +'</span> <span id="name">'+message.username+'</span> <span>'+message.content.message+'</span></div>';
@@ -79,8 +80,9 @@ const handleMessage = () => {
     };
 }
 
-async function hideChat() {
+export const hideChat = async () =>  {
     document.getElementById('chat-panel').style.display = "none";
+    
     await socket.leaveChat(channel.id);
 }
 
@@ -88,8 +90,6 @@ function ChatPanel () {
         let [userText,setInputValue] = useState('');
 
         async function sendMessage() {
-            console.log(userText);
-            console.log(channel);
             
             var data = { "message": userText };
             const messageAck = await socket.writeChatMessage(channel.id, data);
@@ -102,18 +102,14 @@ function ChatPanel () {
             
         }
 
-
         function handleKeyDown(e) {
             if(e.keyCode === 13){
                 sendMessage();
             }
         }
 
-        return (
-            <Row>
-                <Col></Col>
-                <Col className="col-6">   
-                    <div id="chat-panel" onKeyDown={handleKeyDown} className="">
+        return (   
+            <div id="chat-panel" onKeyDown={handleKeyDown}>
                 <Container>
                     <Row className="mb-2">
                         <Col className="col-5">
@@ -143,10 +139,7 @@ function ChatPanel () {
                         </Col>
                     </Row>
                 </Container>
-                    </div>
-                </Col>
-                <Col className="col-1"></Col>
-            </Row>
+            </div>
         );
     };
 

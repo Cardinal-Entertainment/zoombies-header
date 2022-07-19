@@ -1,6 +1,6 @@
 import {Client} from "@heroiclabs/nakama-js"
 import {WebSocketAdapterPb} from "@heroiclabs/nakama-js-protobuf"
-import {JoinChatRoom} from '../components/ChatPanel';
+import {JoinChatRoom, hideChat} from '../components/ChatPanel';
 
 
 var session;
@@ -28,8 +28,8 @@ const NakamaClient = async () => {
         const refreshtoken = window.localStorage.getItem("nkrefreshtoken");
         
 
-        //nakamaClient = new Client(process.env.REACT_APP_NAKAMA_SERVER_KEY, "cryptoz.cards", 7350);
-        nakamaClient = new Client("defaultkey", "127.0.0.1", 7350);
+        nakamaClient = new Client(process.env.REACT_APP_NAKAMA_SERVER_KEY, "cryptoz.cards", 7350);
+        //nakamaClient = new Client("defaultkey", "127.0.0.1", 7350);
         //console.log("nakama client:",nakamaClient);
 
         if(authtoken === null){
@@ -61,6 +61,8 @@ const NakamaClient = async () => {
         console.log('got here', socket);
         socket.ondisconnect = (evt) => {
             console.info("Socket Disconnected", evt);
+            // If current user, hide chat window
+            hideChat();
         };
         socket.onerror = (evt) => {
             console.log("Socket error", evt);
