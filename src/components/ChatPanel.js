@@ -22,21 +22,24 @@ export const JoinChatRoom = async () => {
         // 1 = Room, 2 = Direct Message, 3 = Group
     
         channel = await socket.joinChat(roomname, 1, persistence, hidden);
-        console.log("join response:", channel);
+        console.log("join ROOM response:", channel);
+
+        //reset chat log
+        document.getElementById('chatbox').innerHTML = '';
+
         onlineUsers = channel.presences;
         updateUsers();
     
-        console.log('got here3',channel.id);
+        console.log('ROOM channel id is:',channel.id);
         handleMessage();
         watchOnlineUsers();
 
         //get chat history
-        console.log(nakamaClient);
-        const chatResult = await nakamaClient.listChannelMessages(session, channel.id, 10, true);
-
+        const chatResult = await nakamaClient.listChannelMessages(session, channel.id, 100, true);
         chatResult.messages.forEach((message) => {
             document.getElementById('chatbox').innerHTML += formatMessage(message.create_time, message.username, message.content.message);
-        }); 
+        });
+        scrollChat();
     }
 }
 
@@ -76,6 +79,7 @@ const watchOnlineUsers = () => {
             const msg = '<div class="user-joined">'+ playerObj.username +' has left the room</div>';
             document.getElementById('chatbox').innerHTML += msg;
         })
+        scrollChat();
     };
     //console.log("online users1:",onlineUsers);
 }
@@ -89,13 +93,20 @@ function formatMessage(create_time, username, message) {
 const handleMessage = () => {
     socket.onchannelmessage = (message) => {
         document.getElementById('chatbox').innerHTML += formatMessage(message.create_time, message.username, message.content.message);
+        scrollChat();
     };
 }
 
 export const hideChat = async () =>  {
     document.getElementById('chat-panel').style.display = "none";
     
-    await socket.leaveChat(channel.id);
+    console.log(await socket.leaveChat(channel.id));
+}
+
+function scrollChat() {
+    let chatWindow = document.getElementById('chatbox');
+    var xH = chatWindow.scrollHeight;
+    chatWindow.scrollTo(0, xH);
 }
 
 function ChatPanel () {
