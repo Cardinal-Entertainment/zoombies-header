@@ -35,7 +35,7 @@ export const JoinChatRoom = async () => {
         watchOnlineUsers();
 
         //get chat history
-        const chatResult = await nakamaClient.listChannelMessages(session, channel.id, 10, true);
+        const chatResult = await nakamaClient.listChannelMessages(session, channel.id, 100, true);
         chatResult.messages.forEach((message) => {
             document.getElementById('chatbox').innerHTML += formatMessage(message.create_time, message.username, message.content.message);
         }); 
