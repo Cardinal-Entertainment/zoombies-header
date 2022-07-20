@@ -29,8 +29,6 @@ export const JoinChatRoom = async () => {
 
         onlineUsers = channel.presences;
         updateUsers();
-    
-        console.log('ROOM channel id is:',channel.id);
         handleMessage();
         watchOnlineUsers();
 
