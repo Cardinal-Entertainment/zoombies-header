@@ -38,7 +38,8 @@ export const JoinChatRoom = async () => {
         const chatResult = await nakamaClient.listChannelMessages(session, channel.id, 100, true);
         chatResult.messages.forEach((message) => {
             document.getElementById('chatbox').innerHTML += formatMessage(message.create_time, message.username, message.content.message);
-        }); 
+        });
+        scrollChat();
     }
 }
 
@@ -78,6 +79,7 @@ const watchOnlineUsers = () => {
             const msg = '<div class="user-joined">'+ playerObj.username +' has left the room</div>';
             document.getElementById('chatbox').innerHTML += msg;
         })
+        scrollChat();
     };
     //console.log("online users1:",onlineUsers);
 }
@@ -91,6 +93,7 @@ function formatMessage(create_time, username, message) {
 const handleMessage = () => {
     socket.onchannelmessage = (message) => {
         document.getElementById('chatbox').innerHTML += formatMessage(message.create_time, message.username, message.content.message);
+        scrollChat();
     };
 }
 
@@ -98,6 +101,12 @@ export const hideChat = async () =>  {
     document.getElementById('chat-panel').style.display = "none";
     
     console.log(await socket.leaveChat(channel.id));
+}
+
+function scrollChat() {
+    let chatWindow = document.getElementById('chatbox');
+    var xH = chatWindow.scrollHeight;
+    chatWindow.scrollTo(0, xH);
 }
 
 function ChatPanel () {
