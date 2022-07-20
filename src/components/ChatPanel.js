@@ -22,18 +22,20 @@ export const JoinChatRoom = async () => {
         // 1 = Room, 2 = Direct Message, 3 = Group
     
         channel = await socket.joinChat(roomname, 1, persistence, hidden);
-        console.log("join response:", channel);
+        console.log("join ROOM response:", channel);
+
+        //reset chat log
+        document.getElementById('chatbox').innerHTML = '';
+
         onlineUsers = channel.presences;
         updateUsers();
     
-        console.log('got here3',channel.id);
+        console.log('ROOM channel id is:',channel.id);
         handleMessage();
         watchOnlineUsers();
 
         //get chat history
-        console.log(nakamaClient);
         const chatResult = await nakamaClient.listChannelMessages(session, channel.id, 10, true);
-
         chatResult.messages.forEach((message) => {
             document.getElementById('chatbox').innerHTML += formatMessage(message.create_time, message.username, message.content.message);
         }); 
@@ -95,7 +97,7 @@ const handleMessage = () => {
 export const hideChat = async () =>  {
     document.getElementById('chat-panel').style.display = "none";
     
-    await socket.leaveChat(channel.id);
+    console.log(await socket.leaveChat(channel.id));
 }
 
 function ChatPanel () {

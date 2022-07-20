@@ -1,12 +1,12 @@
 import React from 'react';
 import {Container, Row, Col} from 'react-bootstrap';
 import ChatPanel from './ChatPanel';
-import JoinChatRoom from './ChatPanel';
+import {JoinChatRoom} from './ChatPanel';
 import {NakamaClient,username} from './../utils/nakama';
 
-async function showChat() {
+function showChat() {
     document.getElementById('chat-panel').style.display = "block";
-    await JoinChatRoom();
+    JoinChatRoom();
   }
 
 const Header = (props) => {
@@ -29,7 +29,7 @@ const Header = (props) => {
                 </Col>
                 <Col>
                 <img src="https://zoombies.world/images/mr-icon.png" alt="" width="16%" />
-                <span className="all-text">465 PLAYERS</span>
+                <span className="all-text">36,565 PLAYERS</span>
                 </Col>
                 <Col>
                 <img src="https://zoombies.world/images/zoombies_coin.svg" alt="" width="26%" />
