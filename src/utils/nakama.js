@@ -1,7 +1,7 @@
-import {Client} from "@heroiclabs/nakama-js"
+import {Client,Session} from "@heroiclabs/nakama-js"
 import {WebSocketAdapterPb} from "@heroiclabs/nakama-js-protobuf"
 import {JoinChatRoom, hideChat} from '../components/ChatPanel';
-
+import Cookies from 'js-cookie';
 
 var session;
 var socket;
@@ -18,7 +18,16 @@ const InitNakamaClient = async () => {
         const create = true;
     
         console.log("authenticating user...");
-        session = await nakamaClient.authenticateEmail(email, password, create, username);
+        let auth_cookie = JSON.parse(Cookies.get('NAKAMA_USER_SESSION'));
+        if(auth_cookie){
+            console.log("we have an auth cookie, try to re create session");
+            console.log(auth_cookie);
+            session = Session.restore(auth_cookie.token, auth_cookie.refresh_token);
+            console.log("YAY, restored, session is go!", session);
+        }else{
+            console.log("No auth cookie, auth new user !");
+            session = await nakamaClient.authenticateEmail(email, password, create, username);
+        }
     }
 
     //Now try to authenticate
@@ -27,8 +36,8 @@ const InitNakamaClient = async () => {
         const refreshtoken = window.localStorage.getItem("nkrefreshtoken");
         
 
-        nakamaClient = new Client(process.env.REACT_APP_NAKAMA_SERVER_KEY, "cryptoz.cards", 7350);
-        //nakamaClient = new Client("defaultkey", "127.0.0.1", 7350);
+        //nakamaClient = new Client(process.env.REACT_APP_NAKAMA_SERVER_KEY, "cryptoz.cards", 7350);
+        nakamaClient = new Client("defaultkey", "127.0.0.1", 7350);
         //console.log("nakama client:",nakamaClient);
 
         if(authtoken === null){
@@ -74,7 +83,7 @@ const InitNakamaClient = async () => {
          await JoinChatRoom();
     }
     catch(err){
-        console.error("ERROR auth email", err.statusCode, err.message);
+        console.error("ERROR auth email", err);
     }
 };
 InitNakamaClient();
