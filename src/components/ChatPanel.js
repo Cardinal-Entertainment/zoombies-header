@@ -1,10 +1,12 @@
 import React, { Component, useState } from "react";
-import {nakamaClient, socket, session, username} from '../utils/nakama';
+import {nakamaClient, socket, session} from '../utils/nakama';
 import {Container, Row, Col, Button} from 'react-bootstrap';
 import './chat.css';
 
 var onlineUsers = [];
 let channel;
+var username = '';
+
 export const JoinChatRoom = async () => {
     //define 1 big room for all chat
     const roomname = "ZoombiesMainRoom";
@@ -18,6 +20,8 @@ export const JoinChatRoom = async () => {
         console.log("joining chat failed, socket not available");
     } else {
         await socket.updateStatus("Hello, I am online now");
+
+        username = session.username;
 
         // 1 = Room, 2 = Direct Message, 3 = Group
     
@@ -162,7 +166,7 @@ function ChatPanel () {
                 </Container>
             </div>
         );
-    };
+};
 
 
 

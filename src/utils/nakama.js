@@ -1,12 +1,14 @@
-import {Client,Session} from "@heroiclabs/nakama-js"
+import React, {useState} from 'react';
 import {WebSocketAdapterPb} from "@heroiclabs/nakama-js-protobuf"
 import {JoinChatRoom, hideChat} from '../components/ChatPanel';
 import Cookies from 'js-cookie';
+import {Client,Session} from "@heroiclabs/nakama-js"
 
 var session;
 var socket;
 let username;
 var nakamaClient;
+
 
 const InitNakamaClient = async () => {
 
@@ -18,55 +20,31 @@ const InitNakamaClient = async () => {
         const create = true;
     
         console.log("authenticating user...");
-        let auth_cookie = JSON.parse(Cookies.get('NAKAMA_USER_SESSION'));
-        if(auth_cookie){
+/** 
+        if(Cookies.get('NAKAMA_USER_SESSION')){
+            let auth_cookie = JSON.parse(Cookies.get('NAKAMA_USER_SESSION'));
             console.log("we have an auth cookie, try to re create session");
             console.log(auth_cookie);
             session = Session.restore(auth_cookie.token, auth_cookie.refresh_token);
             console.log("YAY, restored, session is go!", session);
         }else{
             console.log("No auth cookie, auth new user !");
-            session = await nakamaClient.authenticateEmail(email, password, create, username);
+            //session = await nakamaClient.authenticateEmail(email, password, create, username);
         }
+*/
     }
 
-    //Now try to authenticate
+    //Init App
     try {
-        const authtoken = window.localStorage.getItem("nkauthtoken");
-        const refreshtoken = window.localStorage.getItem("nkrefreshtoken");
         
-
         //nakamaClient = new Client(process.env.REACT_APP_NAKAMA_SERVER_KEY, "cryptoz.cards", 7350);
         nakamaClient = new Client("defaultkey", "127.0.0.1", 7350);
-        //console.log("nakama client:",nakamaClient);
-
-        if(authtoken === null){
-            await authenticateUser();
-            console.info("Successfully authenticated new session:", session);
-            window.localStorage.setItem("nkauthtoken", session.token);
-            window.localStorage.setItem("nkrefreshtoken", session.refresh_token);
-        }else{
-            console.log("we have a session..check it..", nakamaClient);
-            await authenticateUser();
-            console.log(session);
-            //console.log(nakamaClient);
-            // Check whether a session has expired or is close to expiry.
-            if (session.isexpired || session.isexpired(Date.now + 1)) {
-                try {
-                    // Attempt to refresh the existing session.
-                    session = await nakamaClient.sessionRefresh(session);
-                } catch (error) {
-                    // Couldn't refresh the session so reauthenticate.
-                    await authenticateUser();
-                    window.localStorage.setItem("nkrefreshtoken", session.refresh_token);
-                }
-                window.localStorage.setItem("nkauthtoken", session.token);
-            }
-        }   
-
+        console.log("nakama client:",nakamaClient);
+            //await authenticateUser();
 
         socket = nakamaClient.createSocket(false,false,new WebSocketAdapterPb());
-        console.log('got here', socket);
+        console.log('got here', socket,session);
+
         socket.ondisconnect = (evt) => {
             console.info("Socket Disconnected", evt);
             // If current user, hide chat window
@@ -77,14 +55,28 @@ const InitNakamaClient = async () => {
         }
         var appearOnline = true;
         var connectionTimeout = 30;
-        session = await socket.connect(session, appearOnline, connectionTimeout);
-        console.log('got here2',socket);
+        let session2 = await socket.connect(session, appearOnline, connectionTimeout);
+        console.log('got here2',socket, session2);
 
-         await JoinChatRoom();
+        await JoinChatRoom();
     }
     catch(err){
         console.error("ERROR auth email", err);
     }
 };
-InitNakamaClient();
-export {nakamaClient,socket,session, username};
+
+const GetNakamaSession = async () => {
+    //Get Started
+    if(Cookies.get('NAKAMA_USER_SESSION')){
+        let auth_cookie = JSON.parse(Cookies.get('NAKAMA_USER_SESSION'));
+        console.log("we have an auth cookie, try to re create session");
+        //console.log(auth_cookie);
+        session = Session.restore(auth_cookie.accessToken, auth_cookie.refresh_token);
+        console.log("YAY, restored, session is go!", session);
+        console.log("session isExpired:", session.isexpired());
+        await InitNakamaClient();
+    }
+
+}
+
+export {GetNakamaSession ,nakamaClient,socket,session, username};
