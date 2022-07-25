@@ -1,7 +1,7 @@
 import React from 'react';
 import {Container, Row, Col} from 'react-bootstrap';
 import ChatPanel from './ChatPanel';
-import {InitNakamaClient} from './../utils/nakama';
+import {InitNakamaClient} from './nakama';
 import {JoinChatRoom} from './ChatPanel';
 
 function showChat() {

@@ -2,7 +2,7 @@ import './App.css';
 import Header from './components/Header';
 import Cookies from 'js-cookie';
 import {Client,Session} from "@heroiclabs/nakama-js"
-import {GetNakamaSession} from './utils/nakama';
+import {GetNakamaSession} from './components/nakama';
 
 let session = GetNakamaSession();
 

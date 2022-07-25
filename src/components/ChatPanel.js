@@ -1,5 +1,5 @@
 import React, { Component, useState } from "react";
-import {nakamaClient, socket, session} from '../utils/nakama';
+import {nakamaClient, socket, session} from './nakama';
 import {Container, Row, Col, Button} from 'react-bootstrap';
 import './chat.css';
 
