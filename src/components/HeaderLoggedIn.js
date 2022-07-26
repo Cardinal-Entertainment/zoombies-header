@@ -1,12 +1,11 @@
 import React from 'react';
 import {Container, Row, Col} from 'react-bootstrap';
 import ChatPanel from './ChatPanel';
-import {InitNakamaClient} from './nakama';
 import {JoinChatRoom} from './ChatPanel';
 
-function showChat() {
+async function showChat () {
     document.getElementById('chat-panel').style.display = "block";
-    JoinChatRoom();
+    await JoinChatRoom();
   }
 
 const HeaderLoggedIn = (props) => {

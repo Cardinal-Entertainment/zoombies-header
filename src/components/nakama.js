@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {WebSocketAdapterPb} from "@heroiclabs/nakama-js-protobuf"
-import {JoinChatRoom, hideChat} from '../components/ChatPanel';
+import {JoinChatRoom, hideChat} from './ChatPanel';
 import Cookies from 'js-cookie';
 import {Client,Session} from "@heroiclabs/nakama-js"
 
@@ -43,7 +43,7 @@ const InitNakamaClient = async () => {
             //await authenticateUser();
 
         socket = nakamaClient.createSocket(false,false,new WebSocketAdapterPb());
-        console.log('got here', socket,session);
+        console.log('got here',socket, session);
 
         socket.ondisconnect = (evt) => {
             console.info("Socket Disconnected", evt);
@@ -61,12 +61,13 @@ const InitNakamaClient = async () => {
         await JoinChatRoom();
     }
     catch(err){
-        console.error("ERROR auth email", err);
+        console.error("ERROR InitNakamaClient:", err);
     }
 };
 
-const GetNakamaSession = async () => {
+const GetNakamaSession = () => {
     //Get Started
+    console.log("Start..GetNakamaSession");
     if(Cookies.get('NAKAMA_USER_SESSION')){
         let auth_cookie = JSON.parse(Cookies.get('NAKAMA_USER_SESSION'));
         console.log("we have an auth cookie, try to re create session");
@@ -74,9 +75,10 @@ const GetNakamaSession = async () => {
         session = Session.restore(auth_cookie.accessToken, auth_cookie.refresh_token);
         console.log("YAY, restored, session is go!", session);
         console.log("session isExpired:", session.isexpired());
-        await InitNakamaClient();
+        InitNakamaClient();
+        return session;
     }
-
+    return false;
 }
 
-export {GetNakamaSession ,nakamaClient,socket,session, username};
+export {GetNakamaSession,nakamaClient,socket,session, username};

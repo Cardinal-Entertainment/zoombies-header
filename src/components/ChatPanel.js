@@ -20,7 +20,6 @@ export const JoinChatRoom = async () => {
         console.log("joining chat failed, socket not available");
     } else {
         await socket.updateStatus("Hello, I am online now");
-
         username = session.username;
 
         // 1 = Room, 2 = Direct Message, 3 = Group
