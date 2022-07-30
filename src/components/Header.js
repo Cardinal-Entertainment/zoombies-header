@@ -4,6 +4,7 @@ import {Container, Row, Col} from 'react-bootstrap';
 import ChatPanel from './ChatPanel';
 import {JoinChatRoom} from './ChatPanel';
 import {NakamaClient,username} from './../utils/nakama';
+import {Rnd} from 'react-rnd';
 
 function showChat() {
     document.getElementById('chat-panel').style.display = "block";
@@ -46,7 +47,17 @@ const Header = (props) => {
             </Row>
             </Container>
         </div>
-        <ChatPanel></ChatPanel>
+        <Rnd
+            default={{
+                x: 0,
+                y: 0,
+                width: 320,
+                height: 200,
+            }}
+            >
+                <ChatPanel></ChatPanel>
+            </Rnd>
+        
       </div>
     );
 };
