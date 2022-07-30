@@ -9,7 +9,7 @@ import {Rnd} from 'react-rnd';
 function showChat() {
     document.getElementById('chat-panel').style.display = "block";
     JoinChatRoom();
-  }
+}
 
 const Header = (props) => {
     return (
@@ -48,6 +48,7 @@ const Header = (props) => {
             </Container>
         </div>
         <Rnd
+            onMouseDown={(e) => e.stopPropagation()}
             default={{
                 x: 0,
                 y: 0,

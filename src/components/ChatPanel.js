@@ -130,7 +130,9 @@ function ChatPanel () {
         }
 
         return (   
-            <div id="chat-panel" onKeyDown={handleKeyDown}>
+            <div id="chat-panel"
+             onKeyDown={handleKeyDown}
+            >
                 <Container>
                     <Row className="mb-2">
                         <Col className="col-5">
