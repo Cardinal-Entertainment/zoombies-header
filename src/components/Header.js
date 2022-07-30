@@ -53,9 +53,9 @@ const Header = (props) => {
                 y: 0,
                 width: 900,
             }}
-            >
-                <ChatPanel></ChatPanel>
-            </Rnd>
+        >
+            <ChatPanel></ChatPanel>
+        </Rnd>
       </div>
     );
 };
